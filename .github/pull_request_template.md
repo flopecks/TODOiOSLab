@@ -1,32 +1,27 @@
-## Mi laboratorio iOS
+## Laboratorio — Mis tareas sobreviven
 
-Nombre o alias visible en la app:
+Alias visible en la app:
 
-## Qué cambié
+## Mis cambios (distinguirlos del código preparado)
 
 - Personalización:
-- Funcionalidad:
+- Funcionalidad completada:
 
 ## Evidencia
 
-Arrastra aquí una captura del simulador o de tu iPhone con tu nombre/alias visible, al menos dos tareas y una completada. Espera a que GitHub termine de subirla y comprueba la vista previa.
+Adjunta una captura en Todas con pendientes y completadas y otra en Completadas. Tu alias debe verse. Explica cómo verificaste que los datos persisten al cerrar el proceso.
 
-## Verificación
+## Comprobación
 
-- [ ] La base de este PR es `main` de MI fork y la rama de origen es `lab/mi-nombre` de MI fork.
-- [ ] La app compila y corre en el simulador o en mi iPhone.
-- [ ] Agrego tareas; el campo queda vacío y no acepta solo espacios.
-- [ ] Puedo completar, reabrir y eliminar tareas; el contador se actualiza.
-- [ ] La captura muestra mi personalización y el estado final.
-- [ ] Hice al menos tres commits descriptivos.
-- [ ] Revisé el diff y no incluí credenciales ni archivos personales de Xcode; revisé con el encargado cualquier ajuste de firma si usé iPhone.
+- [ ] Base: main de MI fork. Origen: lab/swiftdata-mi-alias de MI fork.
+- [ ] Tengo al menos dos commits propios de este laboratorio.
+- [ ] La app compila y corre en mi simulador o dispositivo preparado.
+- [ ] Las capturas cargaron y muestran mi personalización.
+- [ ] Agregar, completar y eliminar persisten después de relanzar; los tres filtros muestran el subconjunto correcto.
+- [ ] Revisé el diff, sin credenciales ni archivos personales de Xcode.
 
-## Lo que aprendí
+## Explicación breve
 
-En dos o tres frases: ¿para qué sirven `@State` y `$newTodoText`? ¿Qué diferencia hay entre un commit y un push?
+¿Qué diferencia hay entre filtrar y eliminar? ¿Por qué el filtro vuelve a Todas pero las tareas permanecen?
 
-## Reto opcional
-
-- [ ] Completé SwiftData y comprobé agregar, completar y eliminar después de cerrar y abrir la app.
-
-Si no hice el reto, dejo esa casilla sin marcar. No afecta la entrega principal.
+Deja el PR abierto y comparte su enlace por el canal del curso. Al terminar, revoca el token temporal y cierra tu sesión de GitHub.
