@@ -27,10 +27,10 @@ struct PersistentTodoScreen: View {
             return todos
         case .pending:
             // DATOS 4A: devuelve solo las tareas pendientes.
-            return todos
+            return todos.filter { !$0.isDone }
         case .completed:
             // DATOS 4B: devuelve solo las tareas completadas.
-            return todos
+            return todos.filter { $0.isDone }
         }
     }
 
@@ -48,7 +48,7 @@ struct PersistentTodoScreen: View {
                             .submitLabel(.done)
                             .onSubmit { addTodo() }
                         Button(action: addTodo) {
-                            Image(systemName: "plus.circle.fill").font(.title2)
+                            Image(systemName: "heart.fill").font(.title2)
                         }
                         .accessibilityLabel("Agregar tarea")
                         .accessibilityIdentifier("addTodoButton")
@@ -90,6 +90,7 @@ struct PersistentTodoScreen: View {
                 }
             }
             .navigationTitle("Mis tareas")
+            .tint(.teal)
             .alert("No se pudo guardar", isPresented: Binding(
                 get: { errorMessage != nil },
                 set: { if !$0 { errorMessage = nil } }
@@ -105,11 +106,13 @@ struct PersistentTodoScreen: View {
         let title = newTodoText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !title.isEmpty else { return }
         // DATOS 2: inserta un StoredTodo en modelContext (una línea).
+        modelContext.insert(StoredTodo(title: title))
         if saveChanges() { newTodoText = "" }
     }
 
     private func deleteTodo(_ todo: StoredTodo) {
         // DATOS 3: elimina todo de modelContext (una línea).
+        modelContext.delete(todo)
         saveChanges()
     }
 
