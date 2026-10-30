@@ -1,15 +1,37 @@
 import SwiftUI
 import SwiftData
 
-// Reto opcional: la consulta, el contenedor y el manejo de errores ya están listos.
+// Selector preparado: cada caso tiene identidad estable para el Picker.
+enum TodoFilter: String, CaseIterable, Identifiable {
+    case all = "Todas"
+    case pending = "Pendientes"
+    case completed = "Completadas"
+    var id: Self { self }
+}
+
+// Laboratorio de persistencia y filtros.
 struct PersistentTodoScreen: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \StoredTodo.createdAt) private var todos: [StoredTodo]
     @State private var newTodoText = ""
+    @State private var selectedFilter: TodoFilter = .all
     @State private var errorMessage: String?
 
     private var remainingCount: Int {
         todos.filter { !$0.isDone }.count
+    }
+
+    private var visibleTodos: [StoredTodo] {
+        switch selectedFilter {
+        case .all:
+            return todos
+        case .pending:
+            // DATOS 4A: devuelve solo las tareas pendientes.
+            return todos.filter { !$0.isDone }
+        case .completed:
+            // DATOS 4B: devuelve solo las tareas completadas.
+            return todos.filter { $0.isDone }
+        }
     }
 
     var body: some View {
@@ -17,7 +39,7 @@ struct PersistentTodoScreen: View {
             List {
                 Section {
                     LabHeader(remainingCount: remainingCount, totalCount: todos.count,
-                              storageLabel: "SwiftData · guardado en este simulador")
+                              storageLabel: "SwiftData · almacenamiento local")
                 }
                 Section("Nueva tarea") {
                     HStack {
@@ -26,7 +48,7 @@ struct PersistentTodoScreen: View {
                             .submitLabel(.done)
                             .onSubmit { addTodo() }
                         Button(action: addTodo) {
-                            Image(systemName: "plus.circle.fill").font(.title2)
+                            Image(systemName: "heart.fill").font(.title2)
                         }
                         .accessibilityLabel("Agregar tarea")
                         .accessibilityIdentifier("addTodoButton")
@@ -34,13 +56,30 @@ struct PersistentTodoScreen: View {
                         .buttonStyle(.borderless)
                     }
                 }
+                Section("Mostrar") {
+                    Picker("Estado", selection: $selectedFilter) {
+                        ForEach(TodoFilter.allCases) { filter in
+                            Text(filter.rawValue).tag(filter)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .accessibilityIdentifier("filterPicker")
+                    Text("Mostrando \(visibleTodos.count) de \(todos.count) tareas")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .accessibilityIdentifier("visibleCountLabel")
+                }
                 Section("Mis tareas") {
                     if todos.isEmpty {
                         ContentUnavailableView("Comienza tu lista persistente",
                                                systemImage: "externaldrive",
                                                description: Text("Las tareas de la práctica en memoria no se copian aquí."))
+                    } else if visibleTodos.isEmpty {
+                        ContentUnavailableView("No hay tareas en este filtro",
+                                               systemImage: "line.3.horizontal.decrease.circle",
+                                               description: Text("Elige Todas para ver tu lista completa."))
                     }
-                    ForEach(todos) { todo in
+                    ForEach(visibleTodos) { todo in
                         TodoRow(title: todo.title, isDone: todo.isDone,
                                 onToggle: {
                                     todo.isDone.toggle()
@@ -51,6 +90,7 @@ struct PersistentTodoScreen: View {
                 }
             }
             .navigationTitle("Mis tareas")
+            .tint(.teal)
             .alert("No se pudo guardar", isPresented: Binding(
                 get: { errorMessage != nil },
                 set: { if !$0 { errorMessage = nil } }
@@ -65,12 +105,14 @@ struct PersistentTodoScreen: View {
     private func addTodo() {
         let title = newTodoText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !title.isEmpty else { return }
-        // EXTRA 2: inserta un StoredTodo en modelContext (una línea).
+        // DATOS 2: inserta un StoredTodo en modelContext (una línea).
+        modelContext.insert(StoredTodo(title: title))
         if saveChanges() { newTodoText = "" }
     }
 
     private func deleteTodo(_ todo: StoredTodo) {
-        // EXTRA 3: elimina todo de modelContext (una línea).
+        // DATOS 3: elimina todo de modelContext (una línea).
+        modelContext.delete(todo)
         saveChanges()
     }
 
